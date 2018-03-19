@@ -303,13 +303,8 @@ def regge_contour_outline(x1,y1,l,bhml,bhmu):
 	mask = ~np.isnan(fy)
 	fx = fx[mask]
 	fy = fy[mask]
-	'''
-	x_int = np.linspace(fx[0], fx[-1], 5000)
-	tck = interpolate.splrep(fx, fy, k = 4, s = 1000)
-	y_int = interpolate.splev(x_int, tck, der = 0)
-	plt.plot(x_int, y_int, linestyle = '-', linewidth = 0.75, color='k')
-	plt.show()
-	'''
+	w=np.blackman(25) 
+	fy=np.convolve(w/w.sum(),fy,mode='same')
 	return(fx,fy)
 
 
@@ -397,6 +392,11 @@ def superradiance_rates_leaver_fraction(w):
 
 	
 def superradiance_rates_detweiler(l2,m2,n2,alpha,astar,ma_array,rp,X,Y,accuracy):
+	if all(ma_array[i] >= ma_array[i+1] for i in range(len(ma_array)-1)):
+		pass
+	else:
+		ma_array = -np.sort(-ma_array)
+	scale = ma_array[0:]/ma_array[0]	
 	A=[]
 	for j in range (len(ma_array)):
 		for i in range(len(m2)):
@@ -437,6 +437,7 @@ def superradiance_rates_detweiler(l2,m2,n2,alpha,astar,ma_array,rp,X,Y,accuracy)
 			ZZ = np.insert(Z,0,ZZ)	
 	ZZ[ZZ < 0] = 0
 	ZZ = np.reshape(ZZ,(len(ma_array),len(m2)*accuracy**2))
+	ZZ = ZZ*scale[:, None]
 	Z2 = list(map(sum, zip(*ZZ)))
 	Z2 = np.reshape(list(Z2),(len(m2),accuracy,accuracy))
 
@@ -448,6 +449,8 @@ def non_increasing(L):
 	return all(x>=y for x, y in zip(L, L[1:]))	
 		
 def regge_contour_limits(X,Y,Z,l,exclusion_limit):
+	print(exclusion_limit)
+	exclusion_limit=1.66974099e-23
 	g = 6.7071186*10**-57
 	solarm = 1.98852*10**30
 	kgev = 5.6095886*10**35
@@ -458,13 +461,19 @@ def regge_contour_limits(X,Y,Z,l,exclusion_limit):
 	y1={}
 	aa= np.logspace(-17.0,-17.0,1)
 	for i in range (len(l)):
+		print(i)
 		cs[i]=[]
-		cs[i] = plt.contour(X/(solarm*kgev*g),Y,Z[i],exclusion_limit,cmap=plt.cm.bone,alpha=0.0,linewidths = 2.5,zorder=2)
+		with warnings.catch_warnings():
+			warnings.simplefilter("ignore")
+			cs[i] = plt.contour(X/(solarm*kgev*g),Y,Z[i],exclusion_limit,cmap=plt.cm.bone,alpha=0.0,linewidths = 2.5,zorder=2)
+	
+		print(i)
 		p1[i]=[]
 		v1[i]=[]
 		x1[i]=[]
 		y1[i]=[]
 		p1[i] = cs[i].collections[0].get_paths()
+			
 		if len(p1[i])>1:
 			for j in range(len(p1[i])):
 				try:
@@ -487,10 +496,10 @@ def regge_contour_limits(X,Y,Z,l,exclusion_limit):
 				del y1[i]
 				continue
 	for i in range(len(x1)):
-		if (len(y1[i])==1):
-			if non_increasing(y1[i]) == True or non_decreasing(y1[i])==True:
-				del x1[i]
-				del y1[i]			
-		else:
+		if (len(y1[i])==2):
 			continue
+		else:	
+			if non_increasing(y1[i]) == True or non_decreasing(y1[i])==True :
+				del x1[i]
+				del y1[i]				
 	return(x1,y1)	
