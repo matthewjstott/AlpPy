@@ -6,11 +6,12 @@ import matplotlib.pyplot as plt
 import scipy as sp
 import sympy as sy
 import functions
-import superradiance_plot
 import diag
 import eoms
 import output
+import spectrum_plot
 import cosmology_plot
+import superradiance_plot
 np.set_printoptions(threshold=np.nan)
 
 ####################################################
@@ -28,22 +29,21 @@ class axiverse_parameters(object):
 		global ma_array, fef, phiin_array, phidotin_array, n, axms 
 		phidotin_array = self.phidotin_array
 		phiin_array = self.phiin_array
-		n = 1
-		ma_array=[10**4]
-		axms = np.array([10**-11])
+		axms = np.array([2.5e-11,10**-13])
 	
 	def spectrum_out(self):
 		fefvisual = True
 		mavisual = True
-		spectrumshow = False
+		spectrumshow = True
 		if spectrumshow == True:
-			diag.spectrum_out(self.ma_array,self.fef,fefvisual,mavisual)
+			spectrum_plot.spectrum_out(self.ma_array,self.fef,fefvisual,mavisual)
 		plt.show()		
 
 
 class axion_dynamic(object):
 	
 	def __init__(self):
+		
 		self.ain,self.tin,self.tfi,self.N,self.n_cross,self.rho_bar,self.rho_mat,self.rho_rad,self.rho_lam = functions.read_in_cosmology()
 		self.rhoin_array = eoms.rhoinitial(phidotin_array, phiin_array, ma_array, n)
 		self.y0 = eoms.yinitial(n,phiin_array,phidotin_array,self.rhoin_array,self.ain)
@@ -74,7 +74,8 @@ class axion_dynamic(object):
 
 
 class superradiance_calculator(object):
-	
+	global axms
+	axms = np.array([10**-11.1,10**-13.1])
 	def __init__(self):
 		self.axm,self.astar,self.g,self.l,self.m,self.n,self.bhml,self.bhmu,self.supermassive,self.constraint,self.accuracy= functions.read_in_blackhole()
 		self.sr_spins,self.sr_masses,self.sr_spin_up,self.sr_spin_low,self.sr_mass_up,self.sr_mass_low,self.sm_spins,self.sm_masses,self.sm_spin_up,self.sm_spin_low,self.sm_mass_up,self.sm_mass_low,self.example_mass,self.example_spin,self.example_spin_error,self.example_mass_error = functions.black_hole_data()
@@ -124,7 +125,7 @@ class superradiance_calculator(object):
 
 def main():
 	
-	Spectra = True
+	Spectra = False
 	Cosmology = False
 	Superradiance = True
 
@@ -142,6 +143,16 @@ def main():
 		nax_cosmology.output()
 		nax_cosmology.printout()
 	#################################
+	
+	'''
+	#######BAYESIAN#NETWORK##########
+	if Network == True:
+		nax_bayesian = network_cosmology()
+		nax_bayesian.solver()
+		nax_bayesian.output()
+		nax_bayesian.printout()
+	#################################
+	'''
 	
 	############# SUPERRADIANCE ##############
 	if Superradiance == True:

@@ -33,6 +33,9 @@ def checkvolume(n,smin,smax,Imax,Nvolmax,Idist):
 
 def diag(phi_range,phidotin,basis,mo,n,betaK,betaM,a0,b0,fav,kmin,kmax,mmin,mmax,FL3,sbar,svar,Nbar,Nvar):
 	
+	
+	n = 1000
+	
 	if mo == 1:
 	
 		kk = np.empty((n,n))
@@ -180,20 +183,5 @@ def diag(phi_range,phidotin,basis,mo,n,betaK,betaM,a0,b0,fav,kmin,kmax,mmin,mmax
 	return ma_array,fef,phiin_array,phidotin_array
 	
 
-def spectrum_out(ma_array,fef,fefvisual,mavisual):
-	
-	if fefvisual == True:
-		fig, ax = plt.subplots()
-		ax.hist(fef,100,normed=True,edgecolor = 'black',alpha=0.5,label='$\\beta_{\mathcal{K},\mathcal{M}} = 0.05$')
-		ax.set_xlabel('$log_{10}\\left( \\frac{m_a^2}{M_{H}^2} \\right)$',fontsize=23)
-		ax.set_ylabel('PDF',fontsize=23)
-		ax.legend(loc='upper right',prop={'size':18})
-			
-		
-	if mavisual == True:
-		fig, ax = plt.subplots()
-		ax.hist(ma_array,100,normed=True,edgecolor = 'black',alpha=0.5,label='$\\beta_{\mathcal{K},\mathcal{M}} = 0.05$')
-		ax.set_xlabel('$log_{10}\\left( \\frac{m_a^2}{M_{H}^2} \\right)$',fontsize=23)
-		ax.set_ylabel('PDF',fontsize=23)
-		ax.legend(loc='upper right',prop={'size':18})
+
 	

@@ -114,7 +114,7 @@ def regge_region_plot(fx,fy,blackholes,rt,xtem,ytem,dytem,dxtem,example_mass,exa
 	plt.xlabel(r'${\rm M_{BH}} \left( M_{\odot} \right)$', ha='center', va='center',size=20,labelpad=15)
 	plt.ylabel(r'$  a_{*}$',size=21)	
 	plt.ylim(0,1)
-	plt.xlim(0,20)
+	plt.xlim(0,70)
 	
 	
 def intersection_plot(nx,ny,indx,indx2):
